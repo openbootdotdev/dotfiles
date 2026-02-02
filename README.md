@@ -1,6 +1,20 @@
 # Dotfiles Template
 
-A minimal dotfiles template for use with [OpenBoot](https://openboot.dev).
+> A minimal, stow-based dotfiles template for [OpenBoot](https://openboot.dev)
+
+[![Use this template](https://img.shields.io/badge/Use%20this-template-blue)](https://github.com/openbootdotdev/dotfiles/generate)
+
+## Quick Start
+
+1. Click **"Use this template"** above to create your own dotfiles repo
+2. Clone your new repo and customize the configs
+3. Deploy with GNU Stow:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+stow -v --target="$HOME" git ssh zsh
+```
 
 ## Structure
 
@@ -10,59 +24,57 @@ dotfiles/
 │   └── .gitconfig      # Git configuration
 ├── ssh/
 │   └── .ssh/
-│       └── config      # SSH configuration
+│       └── config      # SSH configuration  
 ├── zsh/
 │   └── .zshrc          # Zsh configuration
 └── README.md
-```
-
-## Usage
-
-### With OpenBoot
-
-1. Fork this repository
-2. Customize the config files
-3. Create an OpenBoot config at [openboot.dev/dashboard](https://openboot.dev/dashboard)
-4. Set your dotfiles repo URL in the config
-5. Run: `curl -fsSL https://openboot.dev/your-username | bash`
-
-### Manual Setup
-
-```bash
-# Clone to ~/.dotfiles
-git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
-cd ~/.dotfiles
-
-# Deploy with GNU Stow
-stow -v --target="$HOME" git ssh zsh
 ```
 
 ## How It Works
 
 This template uses [GNU Stow](https://www.gnu.org/software/stow/) for symlink management:
 
-- Each top-level directory (git, ssh, zsh) is a "package"
-- Files inside are symlinked relative to `$HOME`
-- `git/.gitconfig` → `~/.gitconfig`
-- `ssh/.ssh/config` → `~/.ssh/config`
-- `zsh/.zshrc` → `~/.zshrc`
+| Source | Target |
+|--------|--------|
+| `git/.gitconfig` | `~/.gitconfig` |
+| `ssh/.ssh/config` | `~/.ssh/config` |
+| `zsh/.zshrc` | `~/.zshrc` |
 
-## Customization
+Each top-level directory is a "stow package" that gets symlinked relative to `$HOME`.
 
-### Adding New Configs
+## Integration with OpenBoot
 
-To add a new config (e.g., tmux):
+### Option 1: Via Dashboard
+
+1. Go to [openboot.dev/dashboard](https://openboot.dev/dashboard)
+2. Create a config and set your dotfiles repo URL
+3. Run your custom install command:
+
+```bash
+curl -fsSL https://openboot.dev/YOUR_USERNAME | bash
+```
+
+### Option 2: Manual
+
+```bash
+# After running OpenBoot
+git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+stow -v --target="$HOME" */
+```
+
+## Adding More Configs
+
+### Simple Config (e.g., tmux)
 
 ```bash
 mkdir -p tmux
-touch tmux/.tmux.conf
-# Edit tmux/.tmux.conf with your config
+echo "set -g mouse on" > tmux/.tmux.conf
 stow -v --target="$HOME" tmux
+# Creates: ~/.tmux.conf
 ```
 
-### Nested Directories
-
-For configs in subdirectories (like `~/.config/nvim`):
+### Nested Config (e.g., Neovim)
 
 ```bash
 mkdir -p nvim/.config/nvim
@@ -70,6 +82,37 @@ touch nvim/.config/nvim/init.lua
 stow -v --target="$HOME" nvim
 # Creates: ~/.config/nvim/init.lua
 ```
+
+### XDG Config Directory
+
+```bash
+mkdir -p alacritty/.config/alacritty
+touch alacritty/.config/alacritty/alacritty.toml
+stow -v --target="$HOME" alacritty
+# Creates: ~/.config/alacritty/alacritty.toml
+```
+
+## Common Additions
+
+| Package | Files |
+|---------|-------|
+| `tmux/` | `.tmux.conf` |
+| `nvim/` | `.config/nvim/init.lua` |
+| `alacritty/` | `.config/alacritty/alacritty.toml` |
+| `starship/` | `.config/starship.toml` |
+| `wezterm/` | `.config/wezterm/wezterm.lua` |
+
+## Tips
+
+- **Backup first**: Stow won't overwrite existing files. Move them to `*.backup` first.
+- **Dry run**: Use `stow -n -v` to preview changes without applying.
+- **Unstow**: Use `stow -D package` to remove symlinks.
+- **Restow**: Use `stow -R package` to refresh symlinks after changes.
+
+## Related
+
+- [openboot](https://github.com/openbootdotdev/openboot) - CLI tool
+- [openboot.dev](https://github.com/openbootdotdev/openboot.dev) - Website
 
 ## License
 
