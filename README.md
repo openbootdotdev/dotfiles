@@ -51,7 +51,7 @@ Each top-level directory is a "stow package" that gets symlinked relative to `$H
 3. Run your custom install command:
 
 ```bash
-curl -fsSL https://openboot.dev/YOUR_USERNAME | bash
+curl -fsSL https://openboot.dev/YOUR_USERNAME/CONFIG_SLUG | bash
 ```
 
 ### Option 2: Manual
