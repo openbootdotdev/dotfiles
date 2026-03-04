@@ -15,4 +15,5 @@ Thumbs.db
 .vscode/
 
 # Local overrides (keep private)
+.*.local
 *.local

@@ -27,6 +27,9 @@
 [merge]
     conflictstyle = diff3
 
+# [credential]
+#     helper = osxkeychain
+
 [alias]
     st = status -sb
     co = checkout
@@ -37,4 +40,5 @@
     unstage = reset HEAD --
     undo = reset --soft HEAD~1
     amend = commit --amend --no-edit
+    # WARNING: stages ALL files including untracked — review with `git status` first
     wip = !git add -A && git commit -m 'WIP'

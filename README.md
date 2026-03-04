@@ -60,7 +60,7 @@ curl -fsSL https://openboot.dev/YOUR_USERNAME/CONFIG_SLUG | bash
 # After running OpenBoot
 git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
 cd ~/.dotfiles
-stow -v --target="$HOME" */
+stow -v --target="$HOME" git ssh zsh
 ```
 
 ## Adding More Configs

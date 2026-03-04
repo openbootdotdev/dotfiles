@@ -2,23 +2,19 @@
 # Zsh Configuration
 # =============================================================================
 
-# Path to Oh My Zsh installation (if using)
-export ZSH="$HOME/.oh-my-zsh"
-
-# Theme (if using Oh My Zsh)
-ZSH_THEME="robbyrussell"
-
-# Plugins (if using Oh My Zsh)
-plugins=(
-    git
-    docker
-    kubectl
-    # zsh-autosuggestions
-    # zsh-syntax-highlighting
-)
-
-# Load Oh My Zsh (if installed)
-[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+# Oh My Zsh (only loaded if installed)
+if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    export ZSH="$HOME/.oh-my-zsh"
+    ZSH_THEME="robbyrussell"
+    plugins=(
+        git
+        docker
+        kubectl
+        # zsh-autosuggestions
+        # zsh-syntax-highlighting
+    )
+    source "$ZSH/oh-my-zsh.sh"
+fi
 
 # =============================================================================
 # Environment Variables
@@ -29,13 +25,10 @@ export VISUAL="$EDITOR"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# Homebrew (Apple Silicon)
+# Homebrew (Apple Silicon or Intel)
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# Homebrew (Intel)
-if [[ -f "/usr/local/bin/brew" ]]; then
+elif [[ -f "/usr/local/bin/brew" ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
@@ -46,10 +39,13 @@ fi
 # Navigation
 alias ..="cd .."
 alias ...="cd ../.."
-alias ~="cd ~"
 
-# List files
-alias ls="ls --color=auto"
+# List files (GNU ls uses --color=auto, macOS BSD ls uses -G)
+if ls --color=auto /dev/null &>/dev/null; then
+    alias ls="ls --color=auto"
+else
+    alias ls="ls -G"
+fi
 alias ll="ls -alF"
 alias la="ls -A"
 alias l="ls -CF"
@@ -73,7 +69,7 @@ alias glog="git log --oneline --graph --decorate -20"
 
 # Docker shortcuts
 alias d="docker"
-alias dc="docker compose"
+alias dco="docker compose"
 alias dps="docker ps"
 alias di="docker images"
 
@@ -111,6 +107,9 @@ extract() {
             *.zip)     unzip "$1" ;;
             *.Z)       uncompress "$1" ;;
             *.7z)      7z x "$1" ;;
+            *.rar)     unrar x "$1" ;;
+            *.tar.zst) tar --zstd -xf "$1" ;;
+            *.zst)     unzstd "$1" ;;
             *)         echo "'$1' cannot be extracted" ;;
         esac
     else
@@ -122,18 +121,21 @@ extract() {
 # Path
 # =============================================================================
 
-# Add custom paths
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
+# Prepend to PATH without duplicates (safe for `reload`)
+path_prepend() { [[ ":$PATH:" != *":$1:"* ]] && export PATH="$1:$PATH"; }
 
-# Node.js (if using nvm)
+# Add custom paths
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+
+# Node.js (adds ~200ms to shell startup; consider lazy loading for faster startup)
 export NVM_DIR="$HOME/.nvm"
 [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 
 # Go
 export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
+path_prepend "$GOPATH/bin"
 
 # Rust
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
