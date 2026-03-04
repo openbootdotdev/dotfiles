@@ -6,10 +6,9 @@
 # Environment Variables
 # =============================================================================
 
-export EDITOR="vim"
+export EDITOR="vi"
 export VISUAL="$EDITOR"
 export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
 
 # Homebrew (Apple Silicon or Intel)
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
