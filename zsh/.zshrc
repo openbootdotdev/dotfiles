@@ -2,20 +2,6 @@
 # Zsh Configuration
 # =============================================================================
 
-# Oh My Zsh (only loaded if installed)
-if [[ -d "$HOME/.oh-my-zsh" ]]; then
-    export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="robbyrussell"
-    plugins=(
-        git
-        docker
-        kubectl
-        # zsh-autosuggestions
-        # zsh-syntax-highlighting
-    )
-    source "$ZSH/oh-my-zsh.sh"
-fi
-
 # =============================================================================
 # Environment Variables
 # =============================================================================
@@ -67,18 +53,6 @@ alias gco="git checkout"
 alias gb="git branch"
 alias glog="git log --oneline --graph --decorate -20"
 
-# Docker shortcuts
-alias d="docker"
-alias dco="docker compose"
-alias dps="docker ps"
-alias di="docker images"
-
-# Kubernetes shortcuts
-alias k="kubectl"
-alias kgp="kubectl get pods"
-alias kgs="kubectl get services"
-alias kgd="kubectl get deployments"
-
 # Quick edit
 alias zshrc="$EDITOR ~/.zshrc"
 alias reload="source ~/.zshrc"
@@ -92,31 +66,6 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
-# Extract various archive formats
-extract() {
-    if [[ -f "$1" ]]; then
-        case "$1" in
-            *.tar.bz2) tar xjf "$1" ;;
-            *.tar.gz)  tar xzf "$1" ;;
-            *.tar.xz)  tar xJf "$1" ;;
-            *.bz2)     bunzip2 "$1" ;;
-            *.gz)      gunzip "$1" ;;
-            *.tar)     tar xf "$1" ;;
-            *.tbz2)    tar xjf "$1" ;;
-            *.tgz)     tar xzf "$1" ;;
-            *.zip)     unzip "$1" ;;
-            *.Z)       uncompress "$1" ;;
-            *.7z)      7z x "$1" ;;
-            *.rar)     unrar x "$1" ;;
-            *.tar.zst) tar --zstd -xf "$1" ;;
-            *.zst)     unzstd "$1" ;;
-            *)         echo "'$1' cannot be extracted" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
-}
-
 # =============================================================================
 # Path
 # =============================================================================
@@ -124,21 +73,8 @@ extract() {
 # Prepend to PATH without duplicates (safe for `reload`)
 path_prepend() { [[ ":$PATH:" != *":$1:"* ]] && export PATH="$1:$PATH"; }
 
-# Add custom paths
 path_prepend "$HOME/.local/bin"
 path_prepend "$HOME/bin"
-
-# Node.js (adds ~200ms to shell startup; consider lazy loading for faster startup)
-export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
-[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
-
-# Go
-export GOPATH="$HOME/go"
-path_prepend "$GOPATH/bin"
-
-# Rust
-[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 # =============================================================================
 # Local Configuration
