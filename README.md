@@ -1,6 +1,6 @@
 # Dotfiles Template
 
-> A minimal, stow-based dotfiles template for [OpenBoot](https://openboot.dev)
+> A minimal dotfiles template for [OpenBoot](https://openboot.dev), using GNU Stow via a `Makefile`
 
 [![Use this template](https://img.shields.io/badge/Use%20this-template-blue)](https://github.com/openbootdotdev/dotfiles/generate)
 
@@ -8,12 +8,12 @@
 
 1. Click **"Use this template"** above to create your own dotfiles repo
 2. Clone your new repo and customize the configs
-3. Deploy with GNU Stow:
+3. Deploy with Make (calls stow internally):
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
 cd ~/.dotfiles
-stow -v --target="$HOME" git ssh zsh
+make install
 ```
 
 ## Structure
@@ -32,7 +32,7 @@ dotfiles/
 
 ## How It Works
 
-This template uses [GNU Stow](https://www.gnu.org/software/stow/) for symlink management:
+The `Makefile` calls [GNU Stow](https://www.gnu.org/software/stow/) to create symlinks in `$HOME`:
 
 | Source | Target |
 |--------|--------|
@@ -40,7 +40,7 @@ This template uses [GNU Stow](https://www.gnu.org/software/stow/) for symlink ma
 | `ssh/.ssh/config` | `~/.ssh/config` |
 | `zsh/.zshrc` | `~/.zshrc` |
 
-Each top-level directory is a "stow package" that gets symlinked relative to `$HOME`.
+Each top-level directory is a "stow package." OpenBoot detects the `Makefile` and runs `make install` automatically — so your repo controls its own deployment logic.
 
 ## Integration with OpenBoot
 
@@ -60,7 +60,7 @@ curl -fsSL https://openboot.dev/YOUR_USERNAME/CONFIG_SLUG | bash
 # After running OpenBoot
 git clone https://github.com/YOUR_USERNAME/dotfiles ~/.dotfiles
 cd ~/.dotfiles
-stow -v --target="$HOME" git ssh zsh
+make install
 ```
 
 ## Adding More Configs
